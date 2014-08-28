@@ -173,12 +173,13 @@ LOGGING = {
 
 IMAGENUM = 25000
 
+DATA_PATH = PROJECT_PATH + '/data/Data/'
+base_path = PROJECT_PATH
+MEDIA_PATH = PROJECT_PATH + '/data/media/'
+FILE_ROOT_PATH = PROJECT_PATH
+
 # If you wish to configure data/media file locations, add localsettings.py in <project root>/Imse/
 try:
     from Imse.localsettings import *
 except ImportError:
     print('No local settings configured, using defaults')
-    DATA_PATH = PROJECT_PATH + '/data/Data/'
-    base_path = PROJECT_PATH
-    MEDIA_PATH = PROJECT_PATH + '/data/media/'
-    FILE_ROOT_PATH = PROJECT_PATH
