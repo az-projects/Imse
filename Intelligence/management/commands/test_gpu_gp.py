@@ -18,8 +18,10 @@ def test_gpu_gp(data, test_input_path):
 
         t = time.time()
         mean, variance = gp_cuda.gaussian_process(data, feedback, feedback_indices, K_noise=K_diag_noise, K_xx_noise=K_xx_noise)
-        totaltime += time.time() - t
-    print(totaltime)
+        itertime = time.time() - t
+        print(str(i) + '\t' + str(itertime) + '\t' + str(len(feedback)))
+        totaltime += itertime
+    print('Total time:', str(totaltime))
 
 
 class Command(BaseCommand):
