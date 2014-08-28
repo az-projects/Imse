@@ -9,7 +9,7 @@ import time
 
 def test_gpu_gp(data, test_input_path):
     totaltime = 0
-    for i in range(62):
+    for i in range(63):
         inputprefix = test_input_path + str(i)
         feedback = np.load(str(inputprefix) + '_feedback.npy')
         feedback_indices = np.load(str(inputprefix) + '_feedback_indices.npy')
