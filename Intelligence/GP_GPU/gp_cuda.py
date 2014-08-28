@@ -11,23 +11,13 @@ import pycuda.cumath as cumath
 import scikits.cuda.linalg as linalg
 import numpy as np
 import scipy.spatial.distance as dist
-
 import pycuda.gpuarray as gpuarray
 import xmlrpclib
 from SimpleXMLRPCServer import SimpleXMLRPCServer
-import socket
 import sys
 import os.path
 
-DATA_PATH = None
-'''
-if socket.gethostname() == 'iitti':
-    DATA_PATH = '/home/lassetyr/programming/Imse/data/Data/'
-    base_path = '/home/lassetyr/programming/Imse/Imse/'
-else:
-    DATA_PATH = "/ldata/IMSE/data/Data/"
-    base_path = '/ldata/IMSE/Imse/Imse/'
-'''
+
 def gp_caller(feedback, feedback_indices):
     print("In test.....")
     print("Allocation done 28")
@@ -109,7 +99,6 @@ def gaussian_process(data, feedback, feedback_indices, float_type=np.float32, in
     #t = time.time()
     if kernel_file == None:
         kernel_file = os.path.dirname(os.path.realpath(__file__)) + '/kernels.c'
-        print(kernel_file)
     if debug:
         print("Initialized starts")
         print("Loading test data")

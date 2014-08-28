@@ -6,32 +6,21 @@ import numpy as np
 import sys
 
 
-def test_gpu_gp():
+def test_gpu_gp(data, test_input_path):
     for i in range(10):
-        feedback = np.load(str(i) + '_feedback.npy')
-        feedback_indices = np.load(str(i) + '_feedback_indices.npy')
-        K_diag_noise = np.load(str(i) + '_random_K.npy')
-        K_xx_noise = np.load(str(i) + '_random_K_xx.npy')
+        inputprefix = test_input_path + str(i)
+        feedback = np.load(str(inputprefix) + '_feedback.npy')
+        feedback_indices = np.load(str(inputprefix) + '_feedback_indices.npy')
+        K_diag_noise = np.load(str(inputprefix) + '_random_K.npy')
+        K_xx_noise = np.load(str(inputprefix) + '_random_K_xx.npy')
 
         mean, variance = gp_cuda.gaussian_process(data, feedback, feedback_indices, K_noise=K_diag_noise, K_xx_noise=K_xx_noise)
 
 
-class Command(Basecommand):
+class Command(BaseCommand):
     def handle(self, *args, **options):
         data = np.asfarray(np.load(settings.DATA_PATH + "cl25000.npy"), dtype="float32")
-        if len(sys.argv) > 1:
-            print('sys.argv length:', len(sys.argv))
-            if sys.argv[1] == 'debug':
-                print('sys.argv[1] == debug')
-                for i in range(20):
-                    feedback = np.load(str(i) + '_feedback.npy')
-                    feedback_indices = np.load(str(i) + '_feedback_indices.npy')
-                    K_diag_noise = np.load(str(i) + '_random_K.npy')
-                    K_xx_noise = np.load(str(i) + '_random_K_xx.npy')
-                    mean, variance = gp_cuda.gaussian_process(data, feedback, feedback_indices, debug=True)
-                exit()
-
-            if sys.argv[1] == 'test':
-                #print('sys.argv[1] == test')
-                test gpu_gp()
-                exit()
+        input_path = settings.DATA_PATH + 'test_input/'
+        #print('sys.argv[1] == test')
+        test_gpu_gp(data, input_path)
+        exit()

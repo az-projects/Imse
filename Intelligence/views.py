@@ -16,7 +16,6 @@ from django.conf import settings
 import xmlrpclib
 
 
-
 results_file = None
 # Refer to path/Path.py for current working dataset
 data_path = settings.DATA_PATH

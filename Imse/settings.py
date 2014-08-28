@@ -6,6 +6,7 @@ TEMPLATE_DEBUG = DEBUG
 # Imports
 
 import os
+import imp
 
 # Project Path
 
@@ -172,16 +173,12 @@ LOGGING = {
 
 IMAGENUM = 25000
 
-import socket
-
-
-if socket.gethostname() == 'iitti':
-    DATA_PATH = '/home/lassetyr/programming/Imse/data/Data/'
-    base_path = '/home/lassetyr/programming/Imse/Imse/'
-    MEDIA_PATH = '/home/lassetyr/programming/Imse/data/media/'
-    FILE_ROOT_PATH = '/home/lassetyr/programming/Imse/Imse/'
-else:
-    DATA_PATH = "/ldata/IMSE/data/Data/"
-    base_path = '/ldata/IMSE/Imse/Imse/'
-    MEDIA_PATH = '/ldata/IMSE/data/media/'
-    FILE_ROOT_PATH = '/ldata/IMSE/Imse/Imse/'
+# If you wish to configure data/media file locations, add localsettings.py in <project root>/Imse/
+try:
+    from Imse.localsettings import *
+except ImportError:
+    print('No local settings configured, using defaults')
+    DATA_PATH = PROJECT_PATH + '/data/Data/'
+    base_path = PROJECT_PATH
+    MEDIA_PATH = PROJECT_PATH + '/data/media/'
+    FILE_ROOT_PATH = PROJECT_PATH
