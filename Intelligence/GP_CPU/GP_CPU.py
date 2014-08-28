@@ -48,7 +48,6 @@ class GPSOM(object):
 
         if accepted == True:
             self.shown_images = np.append(self.shown_images, np.array([self.last_selected_image]))
-            self.remaining_image_list = np.setdiff1d(self.remaining_image_list, np.array([self.last_selected_image]))
 
         # Copy all the values that will be used as they have to be modified only within iteration
         # Current training set with images and feedback and clusters assignments
@@ -56,15 +55,9 @@ class GPSOM(object):
         random_K = np.load("/ldata/IMSE/test_data/gpu_test_1/output/" + str(self.sub_iteration) + "_random_K.npy")
         random_K_xx = np.load("/ldata/IMSE/test_data/gpu_test_1/output/" + str(self.sub_iteration) + "_random_K_xx.npy")
         time_start = time.time()
-        mean, var = self.gp.GP(self.shown_images, self.feedback + feedback, self.remaining_image_list, self.data,
-                               random_K, random_K_xx)
+        mean, var = self.gp.GP(self.shown_images, self.feedback + feedback, self.data, random_K, random_K_xx)
         time_end = time.time()
-        print("Mean and Var returned")
-        print("Compute UCB")
         ucb = mean + self.exploration_rate * np.sqrt(var)
-        print("UCB computed")
-        print("Hello hello")
-        print("Num Predictions" + str(type(num_predictions)))
         images_to_show = None
         if num_predictions == 1:
             print("1 image")
