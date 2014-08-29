@@ -56,8 +56,7 @@ class GP(object):
             print(np.diag(random_K_xx))
         K_xKK_xT_diag = [0 for i in range(len(random_K_xx))]
         for idx in range(len(random_K_xx)):
-            for i in range(len(random_K)):
-                K_xKK_xT_diag[idx] += temp[idx, i] * K_x[idx, i]
+            K_xKK_xT_diag[idx] += np.sum(temp[idx, :] * K_x[idx, :])
         var = random_K_xx - K_xKK_xT_diag
         if self.generate_data:
             np.save(outfileprefix + "var.npy", var)
