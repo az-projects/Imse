@@ -14,7 +14,9 @@ class GP(object):
 
     # Gaussian process returns an index of chosen element from datapoints_predict
     def GP(self, datapoints_shown, feedback, data, random_K, random_K_xx, time=1, sigma_n=0.5):
+        start_time = time.time()
         datapoints_predict = np.setdiff1d(np.arange(len(data)), datapoints_shown)
+        print('datapoints_predict calculated', str(time.time() - start_time))
         if self.generate_data:
             outfileprefix = 'output/' + str(len(feedback) - 12) + '_'
         if self.debug:
@@ -26,11 +28,13 @@ class GP(object):
             print(datapoints_shown.shape)
             print(random_K.shape)
         K = (kernel[datapoints_shown, :])[:, datapoints_shown] + np.diag(random_K)
+        print('K calculated', str(time.time() - start_time))
         if self.debug:
             print("K computed")
         if self.generate_data:
             np.save(outfileprefix + "K.npy", K)
         K_x = (kernel[datapoints_predict, :])[:, datapoints_shown]
+        print('K_x calculated', str(time.time() - start_time))
         if self.generate_data:
             np.save(outfileprefix + "K_x.npy", K_x)
         if self.debug:
@@ -41,10 +45,12 @@ class GP(object):
         if self.generate_data:
             np.save(outfileprefix + "K_inv.npy", np.linalg.inv(K))
         temp = np.dot(K_x, np.linalg.inv(K))
+        print('K_x * K_inv calculated', str(time.time() - start_time))
         if self.generate_data:
             np.save(outfileprefix + "temp.npy", temp)
         #print("Temp computed")
         mean = np.dot(temp, feedback)
+        print('mean calculated', str(time.time() - start_time))
         if self.debug:
             print("Mean computed")
         if self.generate_data:
@@ -56,6 +62,7 @@ class GP(object):
             print(np.diag(random_K_xx))
         K_xKK_xT_diag = [np.sum(temp[idx, :] * K_x[idx, :]) for idx in range(len(random_K_xx))]
         var = random_K_xx - K_xKK_xT_diag
+        print('variance calculated', str(time.time() - start_time))
         if self.generate_data:
             np.save(outfileprefix + "var.npy", var)
         if self.debug:
@@ -65,6 +72,3 @@ class GP(object):
         # for demo only
         #print("For demo only")
         #return K, K_xx, mean, var
-
-
-
