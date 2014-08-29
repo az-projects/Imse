@@ -36,7 +36,6 @@ class GP(object):
         if self.debug:
             print("K_x computed")
         #K_xx = kernel[datapoints_predict,datapoints_predict]+np.diag((sigma_n**2)*np.random.normal(1,0.1,(len(datapoints_predict))))
-        K_xx = kernel[datapoints_predict, datapoints_predict] + np.diag(random_K_xx)
         if self.debug:
             print("K_xx computed")
         if self.generate_data:
@@ -53,9 +52,15 @@ class GP(object):
             np.save(outfileprefix + "diag.npy", np.dot(temp, K_x.T))
         if self.debug:
             print("K_xx shape")
-            print(K_xx.shape)
-            print(np.diag(K_xx))
-        var = np.abs(np.diag(K_xx - np.dot(temp, K_x.T)))
+            print(random_K_xx.shape)
+            print(np.diag(random_K_xx))
+        K_xKK_xT_diag = [0 for i in range(len(random_K_xx))]
+        for idx in range(len(random_K_xx)):
+            for i in range(len(random_K_xx)):
+                K_xKK_xT_diag[idx] += temp[idx, i] * K_x[idx, i]
+        test = np.abs(np.diag(random_K_xx * np.eye(len(random_K_xx), len(random_K_xx)) - np.dot(temp, K_x.T)))
+        var = random_K_xx - K_xKK_xT_diag
+        print(np.allclose(np.diag(test), var))
         if self.generate_data:
             np.save(outfileprefix + "var.npy", var)
         if self.debug:
