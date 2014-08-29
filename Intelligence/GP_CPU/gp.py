@@ -56,9 +56,9 @@ class GP(object):
             print(np.diag(random_K_xx))
         K_xKK_xT_diag = [0 for i in range(len(random_K_xx))]
         for idx in range(len(random_K_xx)):
-            for i in range(len(random_K_xx)):
+            for i in range(len(random_K)):
                 K_xKK_xT_diag[idx] += temp[idx, i] * K_x[idx, i]
-        test = np.abs(np.diag(random_K_xx * np.eye(len(random_K_xx), len(random_K_xx)) - np.dot(temp, K_x.T)))
+        test = np.abs(np.diag(random_K_xx) - np.dot(temp, K_x.T))
         var = random_K_xx - K_xKK_xT_diag
         print(np.allclose(np.diag(test), var))
         if self.generate_data:
