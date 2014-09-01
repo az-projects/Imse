@@ -26,7 +26,7 @@ def test_gpu_gp(data, test_input_path):
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        data = np.asfarray(np.load(settings.DATA_PATH + "cl25000.npy"), dtype="float32")
+        data = np.asfarray(np.load(settings.DATA_PATH + "0_50k_feat.npy"), dtype="float32")
         input_path = settings.DATA_PATH + 'speedtest_input/'
         #print('sys.argv[1] == test')
         test_gpu_gp(data, input_path)
