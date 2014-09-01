@@ -9,15 +9,15 @@ import time
 
 def test_gpu_gp(data, test_input_path):
     totaltime = 0
+    feedback = []
+    feedback_indices = []
     for i in range(63):
-        inputprefix = test_input_path + str(i)
-        feedback = np.load(str(inputprefix) + '_feedback.npy')
-        feedback_indices = np.load(str(inputprefix) + '_feedback_indices.npy')
-        K_diag_noise = np.load(str(inputprefix) + '_random_K.npy')
-        K_xx_noise = np.load(str(inputprefix) + '_random_K_xx.npy')
-
+        new_input = float(np.random.randint(11)) / 10
+        new_input_idx = np.random.randint(np.shape(data)[0])
+        feedback.append(new_input)
+        feedback_indices.append(new_input_idx)
         t = time.time()
-        mean, variance = gp_cuda.gaussian_process(data, feedback, feedback_indices, K_noise=K_diag_noise, K_xx_noise=K_xx_noise)
+        mean, variance = gp_cuda.gaussian_process(data, feedback, feedback_indices)
         itertime = time.time() - t
         print(str(i) + '\t' + str(itertime) + '\t' + str(len(feedback)))
         totaltime += itertime
@@ -27,7 +27,13 @@ def test_gpu_gp(data, test_input_path):
 class Command(BaseCommand):
     def handle(self, *args, **options):
         data = np.asfarray(np.load(settings.DATA_PATH + "0_50k_feat.npy"), dtype="float32")
+        if len(args) > 0:
+            n = int(args[0])
+            for i in range(1, n + 1):
+                tmpdata = np.load(settings.DATA_PATH + str(i) + '_50k_feat.npy')
+                data = np.concatenate((data, tmpdata))
         input_path = settings.DATA_PATH + 'speedtest_input/'
         #print('sys.argv[1] == test')
+        print('Number of image feature vectors: ' + str(np.shape(data)[0]))
         test_gpu_gp(data, input_path)
         exit()

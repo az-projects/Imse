@@ -138,7 +138,6 @@ def gaussian_process(data, feedback, feedback_indices, float_type=np.float32, in
     K_x = np.zeros((n_predict_padded, n_feedback_padded), dtype=float_type)
     K_xK = np.zeros((n_predict_padded, n_feedback_padded), dtype=float_type)
     if K_noise is None:
-        print('Generating K_noise')
         K_noise = np.random.normal(1, 0.1, n_feedback)  # Generate diagonal noise
     # Save K diagonal noise
 

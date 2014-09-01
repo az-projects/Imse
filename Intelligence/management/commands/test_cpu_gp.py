@@ -13,11 +13,9 @@ def test_cpu_gp(data, test_input_path):
         inputprefix = test_input_path + str(i)
         feedback = np.load(str(inputprefix) + '_feedback.npy')
         feedback_indices = np.load(str(inputprefix) + '_feedback_indices.npy')
-        K_diag_noise = np.load(str(inputprefix) + '_random_K.npy')
-        K_xx_noise = np.load(str(inputprefix) + '_random_K_xx.npy')
         gpob = gp.GP()
         t = time.time()
-        mean, var = gpob.GP(feedback_indices, feedback, data, K_diag_noise, K_xx_noise)
+        mean, var = gpob.GP(feedback_indices, feedback, data)
         itertime = time.time() - t
         print(str(i) + '\t' + str(itertime) + '\t' + str(len(feedback)))
         totaltime += itertime
