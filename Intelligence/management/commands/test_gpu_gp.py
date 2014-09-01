@@ -29,9 +29,10 @@ class Command(BaseCommand):
         data = np.asfarray(np.load(settings.DATA_PATH + "0_50k_feat.npy"), dtype="float32")
         if len(args) > 0:
             n = int(args[0])
-            for i in range(1, n + 1):
-                tmpdata = np.load(settings.DATA_PATH + str(i) + '_50k_feat.npy')
-                data = np.concatenate((data, tmpdata))
+            if n > 1:
+                for i in range(1, n):
+                    tmpdata = np.load(settings.DATA_PATH + str(i) + '_50k_feat.npy')
+                    data = np.concatenate((data, tmpdata))
         input_path = settings.DATA_PATH + 'speedtest_input/'
         #print('sys.argv[1] == test')
         print('Number of image feature vectors: ' + str(np.shape(data)[0]))

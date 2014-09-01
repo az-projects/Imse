@@ -180,7 +180,7 @@ def gaussian_process(data, feedback, feedback_indices, float_type=np.float32, in
     predict_indices_gpu = drv.mem_alloc(predict_indices.nbytes)
     drv.memcpy_htod(predict_indices_gpu, predict_indices)
     check_type(K_xK, float_type)
-    K_xK_gpu = drv.mem_alloc(K_xK.nbytes)
+    K_xK_gpuarr = drv.mem_alloc(K_xK.nbytes)
     check_type(diag_K_xx, float_type)
     diag_K_xx_gpu = drv.mem_alloc(diag_K_xx.nbytes)
     drv.memcpy_htod(diag_K_xx_gpu, diag_K_xx)
@@ -221,16 +221,16 @@ def gaussian_process(data, feedback, feedback_indices, float_type=np.float32, in
     linalg.init()
     K_inv_gpuarr = gpuarray.to_gpu(K_inv.astype(float_type))
     K_x_gpuarr = gpuarray.to_gpu(K_x.astype(float_type))
-    K_xK_gpu = linalg.dot(K_x_gpuarr, K_inv_gpuarr)
-    K_xK = K_xK_gpu.get()
+    K_xK_gpuarr = linalg.dot(K_x_gpuarr, K_inv_gpuarr)
+    K_xK = K_xK_gpuarr.get()
 
     if debug:
-        #drv.memcpy_dtoh(K_xK, K_xK_gpu)
+        #drv.memcpy_dtoh(K_xK, K_xK_gpuarr)
         K_xK_test = (np.matrix(K_x) * np.matrix(K_inv))
         check_result('K_xK', K_xK[:n_predict, :n_feedback], K_xK_test[:n_predict, :n_feedback])
         print(K_xK.shape)
 
-    calc_K_xKK_x_T(cuda_module, block_size, n_feedback_padded, n_predict_padded, K_xK_gpu, K_x_gpu, diag_K_xKK_x_T_gpu)
+    calc_K_xKK_x_T(cuda_module, block_size, n_feedback_padded, n_predict_padded, K_xK_gpuarr, K_x_gpu, diag_K_xKK_x_T_gpu)
     drv.memcpy_dtoh(diag_K_xKK_x_T, diag_K_xKK_x_T_gpu)
     drv.memcpy_dtoh(diag_K_xKK_x_T, diag_K_xKK_x_T_gpu)
     if debug:
@@ -243,8 +243,11 @@ def gaussian_process(data, feedback, feedback_indices, float_type=np.float32, in
     if debug:
         variance_test = np.abs(np.subtract(diag_K_xx[:n_predict], diag_K_xKK_x_T[:, :n_predict]))
         check_result('Variance', variance[:, :n_predict], variance_test[:, :n_predict])
-
-    mean = np.dot(K_xK, feedback)
+    feedback = np.atleast_2d(feedback).T
+    feedback_gpuarr = gpuarray.to_gpu(feedback.astype(float_type))
+    mean_gpuarr = linalg.dot(K_xK_gpuarr, feedback_gpuarr)
+    mean = mean_gpuarr.get()
+    #mean = np.dot(K_xK, feedback)
     if debug:
         #drv.memcpy_dtoh(mean, mean_gpu)
         mean_test = np.dot(K_xK, feedback)
